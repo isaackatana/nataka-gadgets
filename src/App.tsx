@@ -1,27 +1,26 @@
 import { useEffect, useState } from 'react'
 import { supabase, WA } from './supabase'
 import Admin from './Admin'
+import Track from './Track'
+import Prices from './Prices'
+import Gallery from './Gallery'
+import Reviews from './Reviews'
+import FindUs from './FindUs'
+import Notice from './Notice'
+import Callback from './Callback'
+import ServicePage, { slugOf } from './ServicePage'
+import data from './services.json'
 
-const repairs = [
-  ['Smartphone repair', 'Cracked screens, batteries, charging ports, water damage, cameras.'],
-  ['Laptop repair', 'Screens, keyboards, hinges, slow or overheating machines, SSD and RAM upgrades.'],
-  ['Electronics repair', 'TVs, tablets, consoles, speakers and other gadgets, diagnosed before we quote.'],
-  ['Software and data', 'Virus removal, OS installs, account unlocks and data recovery.'],
-]
-const brand = [
-  ['Branded apparel', 'T-shirts, polos, hoodies, caps and uniforms with your logo.'],
-  ['Custom printing', 'Mugs, banners, flyers, business cards and one-off gifts.'],
-  ['Stickers and labels', 'Die-cut, waterproof, product labels and car decals.'],
-  ['Business signage', 'Shop signs, window vinyl, stands and indoor boards.'],
-]
+const repairs = data.services.filter(s => s.category === 'repair').map(s => [s.title, s.desc])
+const brand = data.services.filter(s => s.category === 'brand').map(s => [s.title, s.desc])
 const services = [...repairs.map(r => r[0]), ...brand.map(b => b[0])]
 
 function Card({ t, d, c }: { t: string; d: string; c: string }) {
-  return <li className="border-l-8 bg-white p-5" style={{ borderColor: c }}><h3 className="text-lg font-bold">{t}</h3><p className="mt-1 text-sm text-ink/75">{d}</p></li>
+  return <li className="border-l-8 bg-white p-5" style={{ borderColor: c }}><h3 className="text-lg font-bold"><a className="underline decoration-2 underline-offset-4" href={`/services/${slugOf(t)}`}>{t}</a></h3><p className="mt-1 text-sm text-ink/75">{d}</p></li>
 }
 
 function QuoteForm() {
-  const [f, setF] = useState({ name: '', phone: '', service: services[0], details: '' })
+  const [f, setF] = useState(() => { const q = new URLSearchParams(location.search).get('service'); return { name: '', phone: '', service: q && services.includes(q) ? q : services[0], details: '' } })
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value })
   const wa = `https://wa.me/${WA}?text=${encodeURIComponent(`Hi Nataka, I need a quote for: ${f.service}. ${f.details}`)}`
@@ -47,12 +46,15 @@ function QuoteForm() {
 export default function App() {
   const [hash, setHash] = useState(location.hash)
   useEffect(() => { const h = () => setHash(location.hash); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
+  const m = location.pathname.match(/^\/services\/([^/]+)/)
+  if (m) return <ServicePage slug={m[1]} />
   if (hash === '#/admin') return <Admin />
   return <>
+    <Notice />
     <header className="sticky top-0 z-10 border-b-2 border-ink bg-sheet/95 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <a href="#top" className="font-black text-lg" style={{ fontStretch: '115%' }}>Nataka <span className="text-cyan">Gadget</span> &amp; <span className="text-mag">Graphics</span></a>
-        <div className="hidden gap-6 font-semibold sm:flex"><a href="#tech">Tech Care</a><a href="#brand">Brand Wear</a><a href="#quote">Quote</a></div>
+        <div className="hidden gap-6 font-semibold sm:flex"><a href="#tech">Tech Care</a><a href="#brand">Brand Wear</a><a href="#track">Track repair</a><a href="#quote">Quote</a></div>
         <a href="#quote" className="bg-ink px-4 py-2 font-bold text-white">Get a quote</a>
       </nav></header>
     <main id="top">
@@ -76,10 +78,16 @@ export default function App() {
       <section id="brand" className="mx-auto max-w-6xl px-5 py-14">
         <h2 className="text-3xl font-black">Brand Wear</h2><p className="mt-2 max-w-xl">From one custom tee to a full team uniform or shop front.</p>
         <ul className="mt-6 grid gap-4 sm:grid-cols-2">{brand.map(([t, d]) => <Card key={t} t={t} d={d} c="#E5287A" />)}</ul></section>
+      <Gallery />
+      <Reviews />
+      <Prices />
+      <Track />
+      <FindUs />
       <section id="quote" className="bg-yel py-14"><div className="mx-auto grid max-w-6xl gap-8 px-5 md:grid-cols-2">
         <div><h2 className="text-3xl font-black">Message us for a fast quote</h2><p className="mt-3 max-w-md">Tell us what is broken or what you want printed. We reply with a price and turnaround time.</p></div>
         <QuoteForm /></div></section>
     </main>
+    <Callback />
     <footer className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3 px-5 py-8 text-sm"><span>&copy; {new Date().getFullYear()} Nataka Gadget &amp; Graphics Co. Tech Care &amp; Brand Wear.</span><a href="#/admin" className="underline">Staff login</a></footer>
   </>
 }
