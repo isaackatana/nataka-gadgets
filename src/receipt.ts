@@ -12,7 +12,7 @@ export function printReceipt(r: R & { created_at?: string }, shop: Record<string
     h1{font-size:16px;margin:0;text-align:center}.c{text-align:center}.code{font-size:28px;font-weight:bold;text-align:center;margin:10px 0;border:2px solid #000;padding:6px}
     table{width:100%;border-collapse:collapse}td{padding:3px 0;vertical-align:top}.k{width:34%;font-weight:bold}hr{border:0;border-top:1px dashed #000;margin:10px 0}.s{font-size:12px}
     @media print{body{margin:0}}</style></head><body>
-    <h1>Nataka Gadget &amp; Graphics Co.</h1><p class="c s">Tech Care &amp; Brand Wear${shop.address ? '<br>' + esc(shop.address).replace(/\n/g, '<br>') : ''}${shop.phone ? '<br>Tel: ' + esc(shop.phone) : ''}</p>
+    <h1>Nataka Gadgets - Tech Care</h1><p class="c s">Phone, laptop &amp; electronics repairs${shop.address ? '<br>' + esc(shop.address).replace(/\n/g, '<br>') : ''}${shop.phone ? '<br>Tel: ' + esc(shop.phone) : ''}</p>
     <hr><p class="c"><b>REPAIR RECEIPT</b></p><div class="code">${esc(r.code)}</div>
     <table>${line('Customer', r.customer_name)}${line('Phone', r.phone)}${line('Device', r.device)}${line('Issue', r.issue)}${line('Booked in', date)}</table>
     <hr><p class="s"><b>Track your repair:</b> go to ${esc(location.origin)} and open Track your repair. Enter the job code above and your phone number.</p>

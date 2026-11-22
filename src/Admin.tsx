@@ -7,11 +7,12 @@ import ReviewAdmin from './ReviewAdmin'
 import Summary from './Summary'
 import SettingsAdmin from './SettingsAdmin'
 import Today from './Today'
+import ShopAdmin from './ShopAdmin'
 
 export default function Admin() {
   const [authed, setAuthed] = useState<boolean | null>(null)
   const [email, setEmail] = useState(''); const [pw, setPw] = useState(''); const [err, setErr] = useState('')
-  const [rows, setRows] = useState<Quote[]>([]); const [tab, setTab] = useState<'today' | 'quotes' | 'repairs' | 'prices' | 'gallery' | 'reviews' | 'summary' | 'shop'>('today')
+  const [rows, setRows] = useState<Quote[]>([]); const [tab, setTab] = useState<'today' | 'quotes' | 'repairs' | 'prices' | 'gallery' | 'reviews' | 'summary' | 'shop' | 'products'>('today')
   const load = async () => { const { data } = await supabase.from('quotes').select('*').order('created_at', { ascending: false }); setRows((data as Quote[]) ?? []) }
   useEffect(() => { supabase.auth.getSession().then(({ data }) => { setAuthed(!!data.session); if (data.session) load() }) }, [])
   async function login(e: React.FormEvent) {
@@ -27,13 +28,14 @@ export default function Admin() {
       {err && <p role="alert" className="text-mag">{err}</p>}<button className="bg-ink px-5 py-3 font-bold text-white">Log in</button></form></main>
   return <main className="mx-auto max-w-5xl p-6"><div className="flex items-center justify-between"><h1 className="text-2xl font-black">Staff area</h1>
     <div className="flex gap-4"><a href="#top" className="underline">View site</a><button className="underline" onClick={async () => { await supabase.auth.signOut(); setAuthed(false) }}>Log out</button></div></div>
-    <div className="mt-4 flex flex-wrap gap-2">{(['today', 'repairs', 'quotes', 'prices', 'gallery', 'reviews', 'summary', 'shop'] as const).map(t => <button key={t} onClick={() => setTab(t)} aria-pressed={tab === t} className={'border-2 border-ink px-4 py-2 font-bold ' + (tab === t ? 'bg-ink text-white' : 'bg-white')}>{t === 'today' ? 'Today' : t === 'repairs' ? 'Repair jobs' : t === 'quotes' ? 'Quote requests' : t === 'prices' ? 'Price guide' : t === 'gallery' ? 'Gallery' : t === 'reviews' ? 'Reviews' : t === 'summary' ? 'Summary' : 'Shop details'}</button>)}</div>
+    <div className="mt-4 flex flex-wrap gap-2">{(['today', 'repairs', 'quotes', 'prices', 'gallery', 'reviews', 'summary', 'products', 'shop'] as const).map(t => <button key={t} onClick={() => setTab(t)} aria-pressed={tab === t} className={'border-2 border-ink px-4 py-2 font-bold ' + (tab === t ? 'bg-ink text-white' : 'bg-white')}>{t === 'today' ? 'Today' : t === 'repairs' ? 'Repair jobs' : t === 'quotes' ? 'Quote requests' : t === 'prices' ? 'Price guide' : t === 'gallery' ? 'Gallery' : t === 'reviews' ? 'Reviews' : t === 'summary' ? 'Summary' : t === 'products' ? 'Products' : 'Shop details'}</button>)}</div>
     {tab === 'today' && <Today go={setTab} />}
     {tab === 'repairs' && <Repairs />}
     {tab === 'prices' && <PriceAdmin />}
     {tab === 'gallery' && <GalleryAdmin />}
     {tab === 'reviews' && <ReviewAdmin />}
     {tab === 'summary' && <Summary />}
+    {tab === 'products' && <ShopAdmin />}
     {tab === 'shop' && <SettingsAdmin />}
     {tab === 'quotes' && <>
     {rows.length === 0 && <p className="mt-6">No quote requests yet. They will appear here as customers send them.</p>}

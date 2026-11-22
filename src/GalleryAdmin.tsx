@@ -3,7 +3,7 @@ import { supabase } from './supabase'
 import { url, type Item } from './Gallery'
 
 // Shrinks phone photos to max 1200px JPEG before upload to save data and storage.
-async function shrink(file: File): Promise<Blob> {
+export async function shrink(file: File): Promise<Blob> {
   const bmp = await createImageBitmap(file); const s = Math.min(1, 1200 / Math.max(bmp.width, bmp.height))
   const c = document.createElement('canvas'); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s)
   c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
@@ -11,7 +11,7 @@ async function shrink(file: File): Promise<Blob> {
 }
 
 export default function GalleryAdmin() {
-  const [rows, setRows] = useState<Item[]>([]); const [title, setTitle] = useState(''); const [category, setCategory] = useState('tech')
+  const [rows, setRows] = useState<Item[]>([]); const [title, setTitle] = useState(''); const [category] = useState('tech')
   const [file, setFile] = useState<File | null>(null); const [err, setErr] = useState(''); const [busy, setBusy] = useState(false)
   const load = async () => { const { data } = await supabase.from('gallery').select('*').order('created_at', { ascending: false }); setRows((data as Item[]) ?? []) }
   useEffect(() => { load() }, [])
@@ -31,8 +31,7 @@ export default function GalleryAdmin() {
   const i = 'border-2 border-ink bg-white p-2 w-full'
   return <div className="mt-6">
     <form onSubmit={add} className="grid gap-2 border-2 border-ink bg-white p-4 sm:grid-cols-3">
-      <input required aria-label="Title" placeholder="Title (e.g. Staff polos for a hotel)" className={i + ' sm:col-span-2'} value={title} onChange={e => setTitle(e.target.value)} />
-      <select aria-label="Category" className={i} value={category} onChange={e => setCategory(e.target.value)}><option value="tech">Tech Care</option><option value="brand">Brand Wear</option></select>
+      <input required aria-label="Title" placeholder="Title (e.g. Staff polos for a hotel)" className={i + ' sm:col-span-3'} value={title} onChange={e => setTitle(e.target.value)} />
       <input required type="file" accept="image/*" aria-label="Photo" className={i + ' sm:col-span-3'} onChange={e => setFile(e.target.files?.[0] ?? null)} />
       {err && <p role="alert" className="text-mag sm:col-span-3">{err}</p>}
       <button disabled={busy} className="bg-ink px-4 py-2 font-bold text-white disabled:opacity-60 sm:col-span-3">{busy ? 'Uploading...' : 'Add to gallery'}</button>

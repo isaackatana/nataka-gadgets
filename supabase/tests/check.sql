@@ -14,6 +14,7 @@ grant usage on schema storage to anon, authenticated;
 \i supabase/007_settings.sql
 \i supabase/008_notice.sql
 \i supabase/009_terms.sql
+\i supabase/010_shop.sql
 grant select, insert, update, delete on all tables in schema public to anon, authenticated;
 grant usage on all sequences in schema public to anon, authenticated;
 set role authenticated;
@@ -63,4 +64,10 @@ end $$;
 set role anon;
 do $$ begin
   begin insert into site_settings values ('x','y'); raise notice 'FAIL bad key after 009'; exception when others then raise notice 'PASS bad key still refused after 009'; end;
+end $$;
+reset role; set role authenticated; insert into products(name,category,price_kes,active) values ('Shown','Batteries',500,true),('Hidden','Batteries',500,false);
+set role anon;
+do $$ begin
+  if (select count(*) from products)=1 then raise notice 'PASS anon sees only active products'; else raise notice 'FAIL products visibility'; end if;
+  begin insert into products(name,category,price_kes) values('x','x',1); raise notice 'FAIL anon adds product'; exception when others then raise notice 'PASS anon cannot add products'; end;
 end $$;

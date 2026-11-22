@@ -11,6 +11,7 @@ const sets = [
   { table: 'quotes', label: 'Quote requests' },
   { table: 'repairs', label: 'Repair jobs' },
   { table: 'reviews', label: 'Reviews' },
+  { table: 'products', label: 'Products' },
 ]
 
 export default function Backup() {

@@ -1,7 +1,7 @@
-# Launch guide: Nataka Gadget & Graphics Co.
+# Launch guide: Nataka Gadgets - Tech Care
 
 ## 1. Supabase (about 10 minutes)
-1. Create a project. In the SQL editor run, in order: `supabase/schema.sql`, `002_repairs.sql`, `003_prices.sql`, `004_gallery.sql`, `005_reviews.sql`, `006_summary.sql`, `007_settings.sql`, `008_notice.sql`, `009_terms.sql`.
+1. Create a project. In the SQL editor run, in order: `supabase/schema.sql`, `002_repairs.sql`, `003_prices.sql`, `004_gallery.sql`, `005_reviews.sql`, `006_summary.sql`, `007_settings.sql`, `008_notice.sql`, `009_terms.sql`, `010_shop.sql`.
 2. Authentication > Providers > Email: turn OFF "Allow new users to sign up". Only you and your staff should have accounts.
 3. Authentication > Users > Add user: create each staff member with a strong password.
 4. Authentication > Rate limits: keep the defaults.
@@ -29,6 +29,7 @@
 - [ ] Shop details > Notice banner: switch it on with a test message and a show-until date of today. It should appear on the home page and a service page. Switch it off afterwards.
 - [ ] Use "Call me back" at the bottom of the home page. It should appear in Staff area > Quote requests as a Callback request (and trigger the email alert if set up).
 - [ ] Staff area opens on Today. With a test job set to ready for pickup and a new test quote, both should be listed with working Message buttons.
+- [ ] Staff area > Products: add a product with a photo. It should appear under Parts and accessories on the home page and at /shop. Tap Order on WhatsApp and check the message. Mark it Out of stock and check the site changes.
 - [ ] Add one price and one photo. The Price guide and Our work sections appear; remove the test items after.
 - [ ] Delete the test quote and repair job (Supabase > Table editor).
 

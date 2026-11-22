@@ -8,7 +8,7 @@ export type R = { id: string; code: string; customer_name: string; phone: string
 // Turns 07xx / 01xx / +254... into 254xxxxxxxxx for wa.me links.
 export const intl = (p: string) => { const d = p.replace(/\D/g, ''); return d.startsWith('254') ? d : '254' + d.replace(/^0/, '') }
 export function waLink(r: R) {
-  const first = r.customer_name.split(' ')[0], site = location.origin + '/#track', sig = ' - Nataka Gadget & Graphics Co.'
+  const first = r.customer_name.split(' ')[0], site = location.origin + '/#track', sig = ' - Nataka Gadgets, Tech Care'
   const m: Record<string, string> = {
     'received': `Hi ${first}, we have received your ${r.device}. Your job code is ${r.code}. Track progress anytime: ${site}`,
     'ready for pickup': `Hi ${first}, good news: your ${r.device} (${r.code}) is ready for pickup.`,
