@@ -21,17 +21,20 @@ function Card({ t, d, c }: { t: string; d: string; c: string }) {
 
 function QuoteForm() {
   const [f, setF] = useState(() => { const q = new URLSearchParams(location.search).get('service'); return { name: '', phone: '', service: q && services.includes(q) ? q : services[0], details: '' } })
-  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle'); const [trap, setTrap] = useState('')
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => setF({ ...f, [k]: e.target.value })
   const wa = `https://wa.me/${WA}?text=${encodeURIComponent(`Hi Nataka, I need a quote for: ${f.service}. ${f.details}`)}`
   async function submit(e: React.FormEvent) {
-    e.preventDefault(); setState('sending')
+    e.preventDefault()
+    if (trap) return setState('sent') // bots fill the hidden field; pretend it worked
+    setState('sending')
     const { error } = await supabase.from('quotes').insert(f)
     setState(error ? 'error' : 'sent')
   }
   const field = 'mt-1 w-full border-2 border-ink bg-white p-3'
   if (state === 'sent') return <div className="bg-white p-6 border-2 border-ink"><h3 className="text-xl font-bold">Quote request sent</h3><p className="mt-2">We will call or message {f.phone} shortly. For a faster reply, send it on WhatsApp too.</p><a className="mt-4 inline-block bg-ink px-5 py-3 font-bold text-white" href={wa}>Message us on WhatsApp</a></div>
   return <form onSubmit={submit} className="bg-white p-6 border-2 border-ink space-y-4">
+    <input tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" name="website" value={trap} onChange={e => setTrap(e.target.value)} />
     <label className="block font-semibold">Your name<input required className={field} value={f.name} onChange={set('name')} /></label>
     <label className="block font-semibold">Phone number<input required type="tel" className={field} value={f.phone} onChange={set('phone')} /></label>
     <label className="block font-semibold">What do you need?<select className={field} value={f.service} onChange={set('service')}>{services.map(s => <option key={s}>{s}</option>)}</select></label>

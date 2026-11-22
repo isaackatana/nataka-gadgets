@@ -8,7 +8,7 @@
 5. Settings > API: copy the Project URL and the `anon` public key. Never use the `service_role` key in this site.
 
 ## 2. Vercel
-1. Push the project to GitHub, import it in Vercel (framework: Vite).
+1. Push the project to GitHub (the included `.gitignore` keeps `node_modules` and `.env` out; never upload those), import it in Vercel (framework: Vite).
 2. Add environment variables: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_WHATSAPP` (format 2547XXXXXXXX), `VITE_SITE_URL` (your live address, no trailing slash) and `VITE_AREA` (your town, so pages can rank for searches like "screen repair <town>").
 3. Deploy, then add your domain under Settings > Domains.
 
@@ -29,13 +29,13 @@
 - [ ] Shop details > Notice banner: switch it on with a test message and a show-until date of today. It should appear on the home page and a service page. Switch it off afterwards.
 - [ ] Use "Call me back" at the bottom of the home page. It should appear in Staff area > Quote requests as a Callback request (and trigger the email alert if set up).
 - [ ] Staff area opens on Today. With a test job set to ready for pickup and a new test quote, both should be listed with working Message buttons.
-- [ ] Staff area > Products: add a product with a photo. It should appear under Parts and accessories on the home page and at /shop. Tap Order on WhatsApp and check the message. Mark it Out of stock and check the site changes.
+- [ ] Staff area > Products: add a product with a photo. It should appear under Repair parts and tools on the home page and at /shop. Tap Order on WhatsApp and check the message. Mark it Out of stock and check the site changes.
 - [ ] Add one price and one photo. The Price guide and Our work sections appear; remove the test items after.
 - [ ] Delete the test quote and repair job (Supabase > Table editor).
 
 ## 4. Good habits
 - Write the job code and customer phone on the receipt.
-- Spam on the quote form: if it ever becomes a problem, ask me to add Cloudflare Turnstile.
+- Spam: both the quote form and the call-back form have a hidden trap field that catches most bots. If real spam still gets through, ask me to add Cloudflare Turnstile.
 - Supabase free tier pauses after a week of no activity; open the site or dashboard now and then, or upgrade.
 
 ## Database tests
