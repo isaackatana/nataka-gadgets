@@ -10,7 +10,7 @@ export default function ServicePage({ slug }: { slug: string }) {
   const s = data.services.find(x => x.slug === slug)
   useEffect(() => { document.title = s ? `${s.title}${AREA ? ' in ' + AREA : ''} | Nataka Gadgets - Tech Care` : 'Page not found' }, [s])
   const head = <><Notice /><header className="border-b-2 border-ink bg-sheet"><nav className="mx-auto flex max-w-4xl items-center justify-between px-5 py-3">
-    <a href="/" className="text-lg font-black" style={{ fontStretch: '115%' }}>Nataka <span className="text-cyan">Gadget</span> &amp; <span className="text-mag">Graphics</span></a>
+    <a href="/" className="text-lg font-black" style={{ fontStretch: '115%' }}>Nataka <span className="text-cyan">Gadgets</span> <span className="whitespace-nowrap text-mag">Tech Care</span></a>
     <a href="/#quote" className="bg-ink px-4 py-2 font-bold text-white">Get a quote</a></nav></header></>
   if (!s) return <>{head}<main className="mx-auto max-w-4xl px-5 py-14"><h1 className="text-3xl font-black">We could not find that page</h1><p className="mt-3"><a className="underline" href="/">Go to the home page</a> to see all our services.</p></main></>
   const accent = '#00A6D6'

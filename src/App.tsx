@@ -46,7 +46,7 @@ function QuoteForm() {
     </div></form>
 }
 
-export default function App() {
+function Routes() {
   const [hash, setHash] = useState(location.hash)
   useEffect(() => { const h = () => setHash(location.hash); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
   const m = location.pathname.match(/^\/services\/([^/]+)/)
@@ -57,7 +57,7 @@ export default function App() {
     <Notice />
     <header className="sticky top-0 z-10 border-b-2 border-ink bg-sheet/95 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <a href="#top" className="font-black text-lg" style={{ fontStretch: '115%' }}>Nataka <span className="text-cyan">Gadget</span> &amp; <span className="text-mag">Graphics</span></a>
+        <a href="#top" className="font-black text-lg" style={{ fontStretch: '115%' }}>Nataka <span className="text-cyan">Gadgets</span> <span className="whitespace-nowrap text-mag">Tech Care</span></a>
         <div className="hidden gap-6 font-semibold sm:flex"><a href="#tech">Tech Care</a><a href="/shop">Shop</a><a href="#track">Track repair</a><a href="#quote">Quote</a></div>
         <a href="#quote" className="bg-ink px-4 py-2 font-bold text-white">Get a quote</a>
       </nav></header>
@@ -92,4 +92,21 @@ export default function App() {
     <Callback />
     <footer className="mx-auto flex max-w-6xl flex-wrap justify-between gap-3 px-5 py-8 text-sm"><span>&copy; {new Date().getFullYear()} Nataka Gadgets - Tech Care</span><a href="#/admin" className="underline">Staff login</a></footer>
   </>
+}
+
+function WhatsAppFloat() {
+  const [hide, setHide] = useState(false) // hide while the quote form is on screen so it never covers its buttons
+  useEffect(() => {
+    const el = document.getElementById('quote'); if (!el) return
+    const io = new IntersectionObserver(([e]) => setHide(e.isIntersecting)); io.observe(el); return () => io.disconnect()
+  }, [])
+  if (hide) return null
+  const href = `https://wa.me/${WA}?text=${encodeURIComponent('Hi Nataka, I need a quick quote for a repair.')}`
+  return <a href={href} aria-label="Message us on WhatsApp for a fast quote" className="fixed bottom-4 right-4 z-20 bg-mag px-4 py-3 font-bold text-white shadow-lg print:hidden">Fast quote on WhatsApp</a>
+}
+
+export default function App() {
+  const [admin, setAdmin] = useState(location.hash === '#/admin')
+  useEffect(() => { const h = () => setAdmin(location.hash === '#/admin'); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
+  return <><Routes />{!admin && <WhatsAppFloat />}</>
 }

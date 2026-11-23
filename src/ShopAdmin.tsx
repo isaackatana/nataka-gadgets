@@ -34,7 +34,7 @@ export default function ShopAdmin() {
       {err && <p role="alert" className="text-mag sm:col-span-3">{err}</p>}
       <button disabled={busy} className="bg-ink px-4 py-2 font-bold text-white disabled:opacity-60 sm:col-span-3">{busy ? 'Saving...' : 'Add product'}</button>
     </form>
-    {rows.length === 0 && <p className="mt-6">No products yet. The Parts and accessories section stays hidden on the site until you add one.</p>}
+    {rows.length === 0 && <p className="mt-6">No products yet. The Repair parts and tools section stays hidden on the site until you add one.</p>}
     <ul className="mt-4 space-y-2">{rows.map(p => <li key={p.id} className="flex flex-wrap items-center gap-3 border-2 border-ink bg-white p-3">
       {p.image_path ? <img src={url(p.image_path)} alt="" className="h-16 w-16 object-cover" /> : <div className="h-16 w-16 bg-sheet" />}
       <div className="min-w-40 flex-1"><b>{p.name}</b><div className="text-sm text-ink/70">{p.category}{!p.active && ' · hidden from site'}</div></div>
