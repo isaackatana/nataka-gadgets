@@ -3,9 +3,14 @@ import { supabase } from './supabase'
 
 // Cells starting with = + - @ are prefixed so spreadsheets never run them as formulas.
 const cell = (v: unknown) => { let s = v == null ? '' : String(v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"' }
-function toCsv(rows: Record<string, unknown>[]) {
+export function toCsv(rows: Record<string, unknown>[]) {
   const cols = Object.keys(rows[0] ?? {})
   return '\ufeff' + [cols.join(','), ...rows.map(r => cols.map(c => cell(r[c])).join(','))].join('\r\n')
+}
+export function downloadCsv(filename: string, rows: Record<string, unknown>[]) {
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(new Blob([toCsv(rows)], { type: 'text/csv;charset=utf-8' })); a.download = filename
+  a.click(); URL.revokeObjectURL(a.href)
 }
 const sets = [
   { table: 'quotes', label: 'Quote requests' },

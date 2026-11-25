@@ -18,9 +18,15 @@ for (const s of data.services) {
   writeFileSync(`dist/services/${s.slug}/index.html`, page(title, `${s.intro} ${s.desc}`, `/services/${s.slug}`, { '@context': 'https://schema.org', '@type': 'Service', name: s.title, description: s.intro, provider: biz, ...(AREA && { areaServed: AREA }) }))
 }
 mkdirSync('dist/shop', { recursive: true })
-writeFileSync('dist/shop/index.html', page(`Phone and laptop parts and accessories${AREA ? ' in ' + AREA : ''} | ${NAME}`, 'Phone screens, batteries, chargers, laptop parts and accessories. Order on WhatsApp.', '/shop', { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Parts and accessories', publisher: biz }))
+writeFileSync('dist/shop/index.html', page(`Repair parts and tools: phone and laptop parts, batteries, chargers${AREA ? ' in ' + AREA : ''} | ${NAME}`, 'Phone screens, batteries, chargers, laptop parts and accessories. Order on WhatsApp.', '/shop', { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Parts and accessories', publisher: biz }))
+// Product pages are added to the sitemap from the database at build time (redeploy to refresh the list).
+let productIds = []
+try {
+  const U = (process.env.VITE_SUPABASE_URL || '').replace(/\/$/, ''), K = process.env.VITE_SUPABASE_ANON_KEY || ''
+  if (U && K) { const r = await fetch(`${U}/rest/v1/products?select=id&active=eq.true`, { headers: { apikey: K } }); if (r.ok) productIds = (await r.json()).map(x => x.id) }
+} catch { /* sitemap still works without products */ }
 if (SITE) {
-  const urls = ['/', '/shop', ...data.services.map(s => `/services/${s.slug}`)]
+  const urls = ['/', '/shop', ...data.services.map(s => `/services/${s.slug}`), ...productIds.map(id => `/shop/${id}`)]
   writeFileSync('dist/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(u => `<url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`)
   writeFileSync('dist/robots.txt', `User-agent: *\nAllow: /\nSitemap: ${SITE}/sitemap.xml\n`)
 } else console.warn('VITE_SITE_URL not set: skipped sitemap.xml, robots.txt and canonical links.')

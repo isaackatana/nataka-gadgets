@@ -9,6 +9,7 @@ import FindUs from './FindUs'
 import Notice from './Notice'
 import Callback from './Callback'
 import { Shop, ShopPage } from './Shop'
+import ProductPage from './Product'
 import ServicePage, { slugOf } from './ServicePage'
 import data from './services.json'
 
@@ -51,6 +52,8 @@ function Routes() {
   useEffect(() => { const h = () => setHash(location.hash); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
   const m = location.pathname.match(/^\/services\/([^/]+)/)
   if (m) return <ServicePage slug={m[1]} />
+  const pm = location.pathname.match(/^\/shop\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i)
+  if (pm) return <ProductPage id={pm[1]} />
   if (/^\/shop\/?$/.test(location.pathname)) return <ShopPage />
   if (hash === '#/admin') return <Admin />
   return <>
@@ -108,5 +111,6 @@ function WhatsAppFloat() {
 export default function App() {
   const [admin, setAdmin] = useState(location.hash === '#/admin')
   useEffect(() => { const h = () => setAdmin(location.hash === '#/admin'); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h) }, [])
-  return <><Routes />{!admin && <WhatsAppFloat />}</>
+  const onProduct = /^\/shop\/./.test(location.pathname) // product pages have their own order button
+  return <><Routes />{!admin && !onProduct && <WhatsAppFloat />}</>
 }

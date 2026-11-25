@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react'
 import { supabase, type Quote } from './supabase'
 import { intl, waLink, type R } from './Repairs'
+import { LOW_STOCK } from './shopData'
 
 type Tab = 'today' | 'repairs' | 'quotes' | 'prices' | 'gallery' | 'reviews' | 'summary' | 'shop' | 'products'
 const days = (iso: string) => Math.floor((Date.now() - new Date(iso).getTime()) / 86400000)
 const ago = (iso: string) => { const d = days(iso); return d <= 0 ? 'today' : d === 1 ? '1 day ago' : `${d} days ago` }
 
 export default function Today({ go }: { go: (t: Tab) => void }) {
-  const [jobs, setJobs] = useState<(R & { updated_at: string })[]>([]); const [quotes, setQuotes] = useState<Quote[]>([]); const [reviews, setReviews] = useState(0); const [ready, setReady] = useState(false)
+  const [jobs, setJobs] = useState<(R & { updated_at: string })[]>([]); const [quotes, setQuotes] = useState<Quote[]>([]); const [reviews, setReviews] = useState(0); const [ready, setReady] = useState(false); const [low, setLow] = useState<{ id: string; name: string; quantity: number }[]>([])
   useEffect(() => {
     Promise.all([
       supabase.from('repairs').select('*').neq('status', 'collected').order('updated_at'),
       supabase.from('quotes').select('*').eq('status', 'new').order('created_at'),
       supabase.from('reviews').select('id', { count: 'exact', head: true }).eq('approved', false),
-    ]).then(([a, b, c]) => { setJobs((a.data as (R & { updated_at: string })[]) ?? []); setQuotes((b.data as Quote[]) ?? []); setReviews(c.count ?? 0); setReady(true) })
+      supabase.from('products').select('id,name,quantity').not('quantity', 'is', null).lte('quantity', LOW_STOCK).order('quantity'),
+    ]).then(([a, b, c, d]) => { setLow((d.data as typeof low) ?? []); setJobs((a.data as (R & { updated_at: string })[]) ?? []); setQuotes((b.data as Quote[]) ?? []); setReviews(c.count ?? 0); setReady(true) })
   }, [])
   if (!ready) return <p className="mt-6">Loading...</p>
   const pickup = jobs.filter(j => j.status === 'ready for pickup')
@@ -33,5 +35,8 @@ export default function Today({ go }: { go: (t: Tab) => void }) {
       {stale.length > 0 && <button className="mt-3 underline" onClick={() => go('repairs')}>Open Repair jobs</button>}</section>
     <section className={box}><h2 className="text-lg font-bold">Reviews waiting for approval ({reviews})</h2>
       {reviews === 0 ? none : <button className="mt-2 underline" onClick={() => go('reviews')}>Open Reviews</button>}</section>
+    <section className={box}><h2 className="text-lg font-bold">Low stock ({low.length})</h2><p className="text-sm text-ink/70">Products with {LOW_STOCK} or fewer left. Time to restock.</p>
+      <ul className="mt-2 space-y-1">{low.map(x => <li key={x.id}><b>{x.name}</b>: {x.quantity === 0 ? <span className="font-bold text-mag">sold out</span> : `${x.quantity} left`}</li>)}</ul>
+      {low.length === 0 ? <p className="mt-2 text-ink/70">Nothing running low. Enter a quantity next to a product in Products and it will show here when it runs low.</p> : <button className="mt-3 underline" onClick={() => go('products')}>Open Products</button>}</section>
   </div>
 }

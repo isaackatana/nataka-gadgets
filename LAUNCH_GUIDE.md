@@ -1,7 +1,7 @@
 # Launch guide: Nataka Gadgets - Tech Care
 
 ## 1. Supabase (about 10 minutes)
-1. Create a project. In the SQL editor run, in order: `supabase/schema.sql`, `002_repairs.sql`, `003_prices.sql`, `004_gallery.sql`, `005_reviews.sql`, `006_summary.sql`, `007_settings.sql`, `008_notice.sql`, `009_terms.sql`, `010_shop.sql`. Optional: `011_seed_products.sql` adds about 30 starter repair tools and parts, hidden until you check the prices (see the note at the top of that file).
+1. Create a project. In the SQL editor run, in order: `supabase/schema.sql`, `002_repairs.sql`, `003_prices.sql`, `004_gallery.sql`, `005_reviews.sql`, `006_summary.sql`, `007_settings.sql`, `008_notice.sql`, `009_terms.sql`, `010_shop.sql`, `012_product_images.sql` (product photos and details pages), `013_stock_quantity.sql` (stock counts and the Low stock list), `014_compatible.sql` ("Compatible with" models). Optional: `011_seed_products.sql` adds about 30 starter repair tools and parts, hidden until you check the prices (see the note at the top of that file).
 2. Authentication > Providers > Email: turn OFF "Allow new users to sign up". Only you and your staff should have accounts.
 3. Authentication > Users > Add user: create each staff member with a strong password.
 4. Authentication > Rate limits: keep the defaults.
