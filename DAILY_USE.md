@@ -37,6 +37,7 @@ Log in at your site address followed by `/#/admin`. Everything below happens in 
 - Added many products? Redeploy once so Google gets the new product pages in the sitemap.
 
 ## If something looks wrong
+- Open your site address followed by `/#/status`. It shows whether the site has its database settings and can read products, and says what to fix.
 - Shop empty: check the product is not hidden, then hard-refresh (Ctrl+Shift+R).
 - Cannot log in: use the staff email and password set up in Supabase (Authentication, Users).
 - Photo will not upload: check you are logged in, and try a smaller photo.
